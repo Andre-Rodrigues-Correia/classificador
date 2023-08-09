@@ -1,17 +1,62 @@
+import io
+
+from matplotlib.backends.backend_template import FigureCanvas
+
 from train.train import Train
 from train.prepare_training import prepare_models
-import _pickle
+from classifier.classifier import Classifier
+from flask import Flask, make_response, request
+import os.path
 
 # é a primeira vez executando o códifo ? se sim defina a variável 'IS_FIRST' como true
 IS_FIRST = False
 
-if __name__ == '__main__':
-    if(IS_FIRST):
+app = Flask(__name__)
+
+
+@app.route('/classifier', methods=["POST"])
+def get_classification():
+    content = request.get_json()
+    text = content['text']
+    predicted_lang = Classifier.classifier_text(text)
+    response = {
+        'text': text,
+        'language': predicted_lang
+    }
+    return make_response(response, 200)
+
+
+@app.route('/train', methods=["POST"])
+def train_model():
+    if os.path.isfile('datasets/model.pickle'):
+        return make_response({
+            'message': 'modelo já treinado!'
+        }, 400)
+    else:
         prepare_models()
         Train.train_model()
 
-    #Train.classify_using_trained_dataset("Rio de janeiro")
-    #Train.get_accuracy()
-    Train.test_matriz()
+    return make_response({
+        'message': 'modelo treinado com sucesso!'
+    }, 200)
 
 
+@app.route('/confusion_matriz', methods=["GET"])
+def plot_png():
+    fig = Train.create_confusion_matriz()
+    output = io.BytesIO()
+    FigureCanvas(fig).print_figure(output)
+    return make_response(output.getvalue())
+
+
+@app.route('/accuracy', methods=["GET"])
+def get_accuracy():
+    accuracy_score = Train.get_accuracy()
+    return make_response({
+        'message': 'accuracy measured by a validation dataset',
+        'accuracy': accuracy_score
+    })
+
+
+if __name__ == '__main__':
+    app.run()
