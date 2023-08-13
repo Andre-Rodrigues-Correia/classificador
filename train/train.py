@@ -1,6 +1,5 @@
 import io
 
-from matplotlib.backends.backend_template import FigureCanvas
 from nltk.tokenize import word_tokenize
 from nltk.classify import NaiveBayesClassifier
 from nltk.classify.util import accuracy

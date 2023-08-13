@@ -1,6 +1,9 @@
 import io
+import logging
+
 
 from matplotlib.backends.backend_template import FigureCanvas
+from flask_cors import CORS
 
 from train.train import Train
 from train.prepare_training import prepare_models
@@ -16,6 +19,7 @@ app = Flask(__name__)
 
 @app.route('/classifier', methods=["POST"])
 def get_classification():
+    logging.info('request body: {}'.format(request.get_json()))
     content = request.get_json()
     text = content['text']
     predicted_lang = Classifier.classifier_text(text)
@@ -59,4 +63,6 @@ def get_accuracy():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
+    CORS(app)
     app.run()
