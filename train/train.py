@@ -37,12 +37,10 @@ class Train:
         true_labels = [lang for _, lang in test_features]
         predicted_labels = [classifier.classify(features) for features, _ in test_features]
 
-        # Calcular a matriz de confusão
         confusion = confusion_matrix(true_labels, predicted_labels)
 
         accuracy_score = accuracy(classifier, test_features)
 
-        # Visualizar a matriz de confusão usando Seaborn e Matplotlib
         plt.figure(figsize=(8, 6))
         sns.heatmap(confusion, annot=True, fmt="d", cmap="Blues",
                     xticklabels=classifier.labels(), yticklabels=classifier.labels())
@@ -72,22 +70,17 @@ class Train:
             features = {word: True for word in words}
             training_features.append((features, lang))
 
-        # Treinar o classificador Naive Bayes
         classifier = NaiveBayesClassifier.train(training_features)
 
-        # Exemplo de texto para classificar
         test_text = "Esse é um teste para verificar a classificação."
 
-        # Pré-processamento do texto de teste
         test_words = cls.preprocess_text(test_text)
         test_features = {word: True for word in test_words}
 
-        # Classificar o exemplo de texto
         predicted_lang = classifier.classify(test_features)
         print("Texto:", test_text)
         print("Língua Predita:", predicted_lang)
 
-        # Avaliar a precisão do classificador
         accuracy_score = accuracy(classifier, training_features)
         print("Precisão do Classificador:", accuracy_score)
 
