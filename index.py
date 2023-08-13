@@ -11,8 +11,6 @@ from classifier.classifier import Classifier
 from flask import Flask, make_response, request
 import os.path
 
-# é a primeira vez executando o códifo ? se sim defina a variável 'IS_FIRST' como true
-IS_FIRST = False
 
 app = Flask(__name__)
 
