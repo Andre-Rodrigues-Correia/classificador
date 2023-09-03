@@ -18,12 +18,33 @@ class TrainWithCitiesList:
 
     @classmethod
     def get_accuracy(cls):
+        with open("datasets/cities/brazil_cities.txt", encoding="utf8") as cities_brasil_file:
+            cities_brasil = set(city.strip() for city in cities_brasil_file)
+
+        with open("datasets/cities/portugal_cities.txt", encoding="utf8") as cities_portugal_file:
+            cities_portugal = set(city.strip() for city in cities_portugal_file)
         load_training = open('datasets/model_with_cities.pickle', 'rb')
+
         classifier = pickle.load(load_training)
         test_data = Utils.get_test_dataset()
         test_features = [
             ({word: True for word in cls.preprocess_text(text)}, lang) for text, lang in test_data
         ]
+
+        for text, lang in test_data:
+            words = cls.preprocess_text(text)
+            features = {word: True for word in words}
+
+            # Check for city names in the text and adjust the feature set accordingly
+            for city in cities_brasil:
+                if city in text:
+                    features[f"brasil_city_{city}"] = 2  # Increase weight for city words
+
+            for city in cities_portugal:
+                if city in text:
+                    features[f"portugal_city_{city}"] = 2  # Increase weight for city words
+
+            test_features.append((features, lang))
         accuracy_score = accuracy(classifier, test_features)
         return accuracy_score
 

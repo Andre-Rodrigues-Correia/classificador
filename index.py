@@ -4,6 +4,7 @@ import logging
 from matplotlib.backends.backend_template import FigureCanvas
 from flask_cors import CORS
 
+from datasets.validation.validate_model import Validation
 from train.train import Train
 from train.train_with_cities_list import TrainWithCitiesList
 from train.prepare_training import prepare_models
@@ -11,6 +12,8 @@ from classifier.classifier import Classifier
 from classifier.classifier_with_cities_list import ClassifierWithCitiesList
 from flask import Flask, make_response, request
 import os.path
+
+from utils.utils import Utils
 
 app = Flask(__name__)
 
@@ -20,10 +23,11 @@ def get_classification():
     logging.info('request body: {}'.format(request.get_json()))
     content = request.get_json()
     text = content['text']
-    predicted_lang = Classifier.classifier_text(text)
+    predicted_lang, probability_correct = Classifier.classifier_text(text)
     response = {
         'text': text,
-        'language': predicted_lang
+        'language': predicted_lang,
+        'probability': probability_correct
     }
     return make_response(response, 200)
 
@@ -33,10 +37,11 @@ def get_classification_with_cities():
     logging.info('request body: {}'.format(request.get_json()))
     content = request.get_json()
     text = content['text']
-    predicted_lang = ClassifierWithCitiesList.classifier_text(text)
+    predicted_lang, probability_correct = ClassifierWithCitiesList.classifier_text(text)
     response = {
         'text': text,
-        'language': predicted_lang
+        'language': predicted_lang,
+        'probability': probability_correct
     }
     return make_response(response, 200)
 
@@ -92,3 +97,5 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     CORS(app)
     app.run()
+
+
