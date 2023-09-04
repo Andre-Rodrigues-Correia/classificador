@@ -46,7 +46,8 @@ class Train:
                     xticklabels=classifier.labels(), yticklabels=classifier.labels())
         plt.xlabel('Predicted')
         plt.ylabel('True')
-        plt.title(f'Confusion Matrix\nAccuracy: {accuracy_score:.2f}')
+        plt.title(f'Confusion Matrix\nAccuracy: {accuracy_score:.5f}')
+        plt.savefig('datasets/validation/confusion_matriz/{}'.format('abc'), bbox_inches='tight')
         plt.show()
 
     @classmethod

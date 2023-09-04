@@ -5,6 +5,8 @@ from matplotlib.backends.backend_template import FigureCanvas
 from flask_cors import CORS
 
 from datasets.validation.validate_model import Validation
+from tests import tests
+from tests.tests import Tests
 from train.train import Train
 from train.train_with_cities_list import TrainWithCitiesList
 from train.prepare_training import prepare_models
